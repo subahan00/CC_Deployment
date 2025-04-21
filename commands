@@ -1,0 +1,79 @@
+cat << 'EOF' > ~/aws_php_mysql_setup_guide.txt
+# AWS EC2 PHP/MySQL Setup Complete Guide
+# Generated on $(date)
+
+## ========================
+## 1. INITIAL SERVER SETUP
+## ========================
+
+# Update all packages
+sudo apt update && sudo apt upgrade -y
+
+# Install LAMP stack components
+sudo apt install apache2 mysql-server php libapache2-mod-php php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
+
+## ========================
+## 2. MYSQL DATABASE SETUP
+## ========================
+
+# Secure MySQL installation (set root password, remove test DB, etc.)
+sudo mysql_secure_installation
+
+# Create database and user (run in MySQL shell)
+mysql -u root -p <<MYSQL_SCRIPT
+CREATE DATABASE hr_management;
+CREATE USER 'hr_user'@'localhost' IDENTIFIED BY 'StrongPassword123!';
+GRANT ALL PRIVILEGES ON hr_management.* TO 'hr_user'@'localhost';
+FLUSH PRIVILEGES;
+MYSQL_SCRIPT
+
+## ========================
+## 3. FILE PERMISSIONS
+## ========================
+
+# Set proper ownership for web directory
+sudo chown -R www-data:www-data /var/www/html/
+
+# Set secure permissions
+sudo chmod -R 755 /var/www/html/
+
+# Create uploads directory with correct permissions
+sudo mkdir -p /var/www/html/uploads
+sudo chown www-data:www-data /var/www/html/uploads
+
+## ========================
+## 4. TROUBLESHOOTING CMDS
+## ========================
+
+# Restart services
+sudo systemctl restart apache2 mysql
+
+# Check Apache error logs
+sudo tail -f /var/log/apache2/error.log
+
+# Test MySQL connection
+mysql -u hr_user -p'StrongPassword123!' -e "SHOW DATABASES;"
+
+## ========================
+## 5. FILEZILLA UPLOAD INFO
+## ========================
+
+# Location of all files uploaded via FileZilla:
+/var/www/html/
+
+# Key directories:
+- Main website files: /var/www/html/
+- Database config: /var/www/html/db_config.php
+- Uploaded files: /var/www/html/uploads/
+
+# To view all uploaded files:
+ls -la /var/www/html/
+
+# To find recently modified files:
+sudo find /var/www/html -type f -mtime -7 -ls
+
+# To backup your entire website:
+sudo tar -czvf ~/website_backup_$(date +%Y%m%d).tar.gz /var/www/html/
+EOF
+#to run instance on local
+ ssh -i "newkey.pem" ubuntu@ec2-18-141-139-227.ap-southeast-1.compute.amazonaws.com
