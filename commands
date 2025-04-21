@@ -76,4 +76,4 @@ sudo find /var/www/html -type f -mtime -7 -ls
 sudo tar -czvf ~/website_backup_$(date +%Y%m%d).tar.gz /var/www/html/
 EOF
 #to run instance on local
- ssh -i "newkey.pem" ubuntu@ec2-18-141-139-227.ap-southeast-1.compute.amazonaws.com
+ ssh -i "newkey.pem" ubuntu@ec2-13-228-117-151.ap-southeast-1.compute.amazonaws.com
